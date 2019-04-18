@@ -112,14 +112,14 @@ class Layout():
 				hex.index_x=y;
 				hex.index_y=x;
 				self.spriteGroup.add(hex)
-				
+								
 				if y % 2 == 0:
 					hex.rect.x=x * TILE_SIZE[0]
-					hex.rect.y=y * TILE_SIZE[1] - (y * 20)
+					hex.rect.y=y * TILE_SIZE[1] - (y * DEL_SPACE_BEETWEEN_HEX)
 
 				else:
 					hex.rect.x=x * TILE_SIZE[0] + (TILE_SIZE[0] / 2)
-					hex.rect.y=y * TILE_SIZE[1] - (y * 20)
+					hex.rect.y=y * TILE_SIZE[1] - (y * DEL_SPACE_BEETWEEN_HEX)
 				
 				hex.addSurfeceText()
 
@@ -211,5 +211,9 @@ class Layout():
 				# self.display.blit(SurfaceText, (lineX, lineY))
 		self.spriteGroup.draw(self.display)
 
-
+	def draw_camera(self,camera):
+		for sprite in self.spriteGroup:
+			self.display.blit(sprite.backgroundImage, camera.apply(sprite))
+			self.display.blit(sprite.image, camera.apply(sprite))
+	
 	

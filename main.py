@@ -6,19 +6,8 @@ import pygame
 import math
 import layout
 from MyConst import *
-#Если HEIGHT_SCREEN=400 in PygameY=392 MyY=8 PygameY=7 MyY=393
-#Каждую переменную сначало преобразовываем в мою, а потом обратно
-#Две функции, чтобы не запутаться в каких координатах я считаю, от нижнего левого или от верхнего левого.
-def getX_From_Pygame(positionX):
-	return positionX;
-def getY_From_Pygame(positionY):
-	return HEIGHT_SCREEN-positionY;
-def getX_In_Pygame(positionX):
-	return positionX;
-def getY_In_Pygame(positionY):
-	return HEIGHT_SCREEN-positionY;
-	
-	
+import camera as cam
+
 
 clock = pygame.time.Clock()
 pygame.init()
@@ -35,6 +24,14 @@ board.draw_world()
    
 NeighborActiveCell=[]
 
+total_level_width=1200
+total_level_height=1200
+camera = cam.Camera(cam.camera_configure, total_level_width, total_level_height) 
+cameraRect=[WIDTH_SCREEN/2,0]
+
+isLeftPress=False
+isRightPress=False
+
 while PLAY:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -47,6 +44,7 @@ while PLAY:
 			mouse_y=event.pos[1]
 		elif event.type ==  pygame.MOUSEBUTTONDOWN:
 		
+			
 			for i in NeighborActiveCell:
 				lastHex=i[0]
 				lastHex.image=i[1]
@@ -54,7 +52,13 @@ while PLAY:
 				
 			mouse_x=event.pos[0]
 			mouse_y=event.pos[1]
+			print(cameraRect)
+			mouse_x=mouse_x+cameraRect[0]-WIDTH_SCREEN/2
+			# mouse_y=mouse_y+cameraRect[1]
+			
 			point=[mouse_x,mouse_y]
+			print(point)
+
 			
 			collapsList=[]
 			for hex in board.spriteGroup.sprites():
@@ -105,11 +109,43 @@ while PLAY:
 				# print(str(hex.index_x)+"|"+str(hex.index_y))
 				#hex.image.fill(GREEN)
 				
-				board.draw_world()
+				#board.draw_world()
 				
+					
+		elif event.type == pygame.KEYDOWN:
+			if( event.key == pygame.K_RIGHT):
+				isRightPress=True
+			elif event.key == pygame.K_LEFT:
+				isLeftPress=True
+				
+		elif event.type == pygame.KEYUP:
+			if( event.key == pygame.K_RIGHT):
+				isRightPress=False
+			elif event.key == pygame.K_LEFT:
+				isLeftPress=False
+
+				
+		screen.fill(WHITE)	
+		board.draw_camera(camera)
+
+	if isLeftPress:
+		move=cameraRect[0]-3
+		cameraRect[0]=max(0,move)
+		screen.fill(WHITE)	
+		board.draw_camera(camera)
+		
+		
+	if isRightPress: 
+		move=max(WIDTH_SCREEN/2,cameraRect[0]+3);
+		cameraRect[0]=min(move,1400)
+		screen.fill(WHITE)	
+		board.draw_camera(camera)
 
 		
-		
+	camera.update(cameraRect[0],cameraRect[1])	
+	
+
+				
 	pygame.display.flip()
  
 
