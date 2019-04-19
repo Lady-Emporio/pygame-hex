@@ -48,8 +48,18 @@ class Hex(pygame.sprite.Sprite):
 		self.index_x=index_x;
 		self.index_y=index_y;
 		self.surfaceText=None;
+		self.listNeighbor=[]
 		
-		#self.addSurfeceText();
+		self.np=None
+		self.isHaveNps=False
+	def isNPS(self):
+		return self.isHaveNps;
+	def setNPS(self,nps):
+		self.np=nps
+		self.isHaveNps=True
+	def removeNps(self):
+		self.np=None
+		self.isHaveNps=False
 		
 	def __repr__(self):
 		return 'Tile(%s)' % self.image
@@ -77,6 +87,9 @@ class Layout():
 		self.hexList=[]
 		self.world=None;
 		self.initWorld();
+		
+		self.activeNps=False
+		self.activeHex=False
 	
 	def initWorld(self):
 		FIRST_LAYOUT= [
@@ -93,8 +106,32 @@ class Layout():
 				getHex(HexType.lightGreen), getHex(HexType.yellow),getHex(HexType.greenGrown), getHex(HexType.red),
 			],
 			[
+				getHex(HexType.lightGreen), getHex(HexType.red),getHex(HexType.greenGrown), getHex(HexType.greenGrown),
+				getHex(HexType.lightGreen), getHex(HexType.yellow),getHex(HexType.greenGrown), getHex(HexType.red),
+			],
+			[
+				getHex(HexType.greenGrown), getHex(HexType.yellow),getHex(HexType.greenGrown), getHex(HexType.red),
+				getHex(HexType.lightGreen), getHex(HexType.yellow),getHex(HexType.greenGrown), getHex(HexType.red),
+			],
+			[
+				getHex(HexType.lightGreen), getHex(HexType.yellow),getHex(HexType.greenGrown), getHex(HexType.red),
+				getHex(HexType.lightGreen), getHex(HexType.red),getHex(HexType.greenGrown), getHex(HexType.red),
+			],
+			[
+				getHex(HexType.yellow), getHex(HexType.red),getHex(HexType.greenGrown), getHex(HexType.red),
+				getHex(HexType.lightGreen), getHex(HexType.yellow),getHex(HexType.red), getHex(HexType.red),
+			],
+			[
 				getHex(HexType.lightGreen), getHex(HexType.yellow),getHex(HexType.greenGrown), getHex(HexType.red),
 				getHex(HexType.lightGreen), getHex(HexType.yellow),getHex(HexType.greenGrown), getHex(HexType.red),
+			],
+			[
+				getHex(HexType.yellow), getHex(HexType.greenGrown),getHex(HexType.greenGrown), getHex(HexType.red),
+				getHex(HexType.lightGreen), getHex(HexType.greenGrown),getHex(HexType.greenGrown), getHex(HexType.red),
+			],
+			[
+				getHex(HexType.lightGreen), getHex(HexType.yellow),getHex(HexType.greenGrown), getHex(HexType.red),
+				getHex(HexType.lightGreen), getHex(HexType.greenGrown),getHex(HexType.greenGrown), getHex(HexType.red),
 			],
 		]
 		
@@ -109,8 +146,8 @@ class Layout():
 			y += 1
 			for hex in row:
 				x+= 1
-				hex.index_x=y;
-				hex.index_y=x;
+				hex.index_x=y;#x=y its not error
+				hex.index_y=x;#y=x
 				self.spriteGroup.add(hex)
 								
 				if y % 2 == 0:
@@ -122,6 +159,7 @@ class Layout():
 					hex.rect.y=y * TILE_SIZE[1] - (y * DEL_SPACE_BEETWEEN_HEX)
 				
 				hex.addSurfeceText()
+				hex.listNeighbor=self.getListIndexNeighborHexFromIndexHex(hex.index_x,hex.index_y)
 
 	def getListIndexNeighborHexFromIndexHex(self,x,y):
 		if(x>=len(self.world)):
@@ -183,7 +221,8 @@ class Layout():
 				Neighbor.append(rightDown)
 			return Neighbor;
 
-			
+	def getNeighborHex(self,x,y):
+		return self.world[x][y].listNeighbor
 			
 			
 			
@@ -215,5 +254,6 @@ class Layout():
 		for sprite in self.spriteGroup:
 			self.display.blit(sprite.backgroundImage, camera.apply(sprite))
 			self.display.blit(sprite.image, camera.apply(sprite))
-	
+			if(sprite.isNPS()):
+				self.display.blit(sprite.np.image, camera.apply(sprite).move(int(TILE_SIZE[0]/4),int(TILE_SIZE[1]/4)) )
 	

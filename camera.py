@@ -4,7 +4,8 @@ def camera_configure(camera, x,y):
     l=x
     t=y
     _, _, w, h = camera
-    l, t = -l+WIDTH_SCREEN / 2, -t+HEIGHT_SCREEN / 2
+    # l, t = -l+WIDTH_SCREEN / 2, -t+HEIGHT_SCREEN / 2
+    l, t = -l, -t
 
     l = min(0, l)                           # Не движемся дальше левой границы
     l = max(-(camera.width-WIDTH_SCREEN), l)   # Не движемся дальше правой границы
@@ -14,12 +15,15 @@ def camera_configure(camera, x,y):
     return pygame.Rect(l, t, w, h)   
 
 class Camera(object):
-    def __init__(self, camera_func, width, height):
+    def __init__(self, camera_func, width, height,x,y):
         self.camera_func = camera_func
-        self.state = pygame.Rect(0, 0, width, height)
+        self.state = pygame.Rect(x, y, width, height)
+        self.x=x
+        self.y=y
+        self.moveInOneFPS=7
 	
     def apply(self, target):
         return target.rect.move(self.state.topleft)
 
-    def update(self, x,y):
-        self.state = self.camera_func(self.state, x,y)
+    def update(self):
+        self.state = self.camera_func(self.state, self.x,self.y)
