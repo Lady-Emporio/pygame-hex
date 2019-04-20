@@ -9,7 +9,9 @@ class NPS(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
 
-		Simage = pygame.image.load(r'image\nps1.png')
+		# Simage = pygame.image.load(r'image\nps1.png')
+		# Simage = pygame.image.load(r'C:\Users\al\Desktop\TestHabr\hex\MyCreate\lancer.png')
+		Simage = pygame.image.load(r'C:\Users\al\Desktop\TestHabr\hex\MyCreate\swordsman.png')
 		self.defaultImage=pygame.transform.scale(Simage, [int(TILE_SIZE[0]/2),int(TILE_SIZE[1]/2)])
 		Simage = pygame.image.load(r'image\border.png')
 		self.activeImage=pygame.transform.scale(Simage, [int(TILE_SIZE[0]/2),int(TILE_SIZE[1]/2)])

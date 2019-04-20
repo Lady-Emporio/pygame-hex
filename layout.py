@@ -52,6 +52,12 @@ class Hex(pygame.sprite.Sprite):
 		
 		self.np=None
 		self.isHaveNps=False
+
+		self.isNeedMove=False
+		self.movePointX=0;
+		self.movePointY=0;
+		self.indexMove=0;
+
 	def isNPS(self):
 		return self.isHaveNps;
 	def setNPS(self,nps):
@@ -62,7 +68,8 @@ class Hex(pygame.sprite.Sprite):
 		self.isHaveNps=False
 		
 	def __repr__(self):
-		return 'Tile(%s)' % self.image
+		#return 'Tile(%s)' % self.image
+		return 'Hex(%s)' % str(id(self))
 	def addSurfeceText(self):
 	
 		self.removeSurfeceText();
@@ -78,7 +85,28 @@ class Hex(pygame.sprite.Sprite):
 		
 	def removeSurfeceText(self):
 		self.image = self.backgroundImage
+
+	def needMove(self,x,y):
+		self.isNeedMove=True;
+		self.movePointX=x;
+		self.movePointY=y;
+		self.indexMove=0;
+
+	def goMove(self,rect):
+		return rect.move(int(self.movePointX),int(self.movePointY))
+		#if self.isNeedMove:
+			
+			#newrect=pygame.Rect(newrect.left, newrect.top, newrect.width+int(self.movePointX), newrect.height+int(self.movePointY))
+			#self.isNeedMove=False;
+			#return newrect
+		#else:
+		return newrect
 		
+	def endMove(self):
+		self.isNeedMove=False
+		self.movePointX=0;
+		self.movePointY=0;
+		self.indexMove=0;
 
 class Layout():
 	def __init__(self, display):
@@ -226,7 +254,7 @@ class Layout():
 			
 			
 			
-	def draw_world(self):
+	#def draw_world(self):
 		
 		# y = -1
 		# x = -1
@@ -248,12 +276,22 @@ class Layout():
 				# lineY=hex.rect.y+ (TILE_SIZE[0] / 2)#-(SurfaceText.get_height()/2)
 				# self.display.blit(hex.image, hex.rect)
 				# self.display.blit(SurfaceText, (lineX, lineY))
-		self.spriteGroup.draw(self.display)
+		#self.spriteGroup.draw(self.display)
 
 	def draw_camera(self,camera):
+		lastSprite=[]
 		for sprite in self.spriteGroup:
 			self.display.blit(sprite.backgroundImage, camera.apply(sprite))
 			self.display.blit(sprite.image, camera.apply(sprite))
 			if(sprite.isNPS()):
-				self.display.blit(sprite.np.image, camera.apply(sprite).move(int(TILE_SIZE[0]/4),int(TILE_SIZE[1]/4)) )
+				lastSprite.append(sprite)
+				
+		for sprite in lastSprite:
+			#self.display.blit(sprite.np.image, camera.apply(sprite).move(int(TILE_SIZE[0]/4),int(TILE_SIZE[1]/4)) )
+					oldRect=camera.apply(sprite).move(int(TILE_SIZE[0]/4),int(TILE_SIZE[1]/4)) ;
+					rect=sprite.goMove(oldRect )
+					print(sprite)
+					print(oldRect)
+					print(rect)
+					self.display.blit(sprite.np.image,rect)
 	
